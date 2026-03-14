@@ -7,8 +7,8 @@ import threading
 app = Flask(__name__)
 
 # Datele tale de la Twilio
-account_sid = 'AC12757e86a8c931c80f749acf65269e6a'
-auth_token = 'a39926f1e08d6b14c4712ad54d6bd8d6'
+account_sid = 'cheie'
+auth_token = 'token'
 client = Client(account_sid, auth_token)
 
 
