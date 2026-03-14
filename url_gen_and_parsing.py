@@ -2,17 +2,17 @@ import json
 import urllib.parse
 from playwright.sync_api import sync_playwright
 from bs4 import BeautifulSoup
-import time
+import datetime
 import re
 
 
-def generate_vola_url(payload_str: str) -> str:
+def generate_vola_url(payload) -> str:
 
-    # 1. Parse the JSON string into a Python dictionary
-    try:
-        payload = json.loads(payload_str)
-    except json.JSONDecodeError:
-        return "Error: Invalid JSON string provided."
+    # # 1. Parse the JSON string into a Python dictionary
+    # try:
+    #     payload = json.loads(payload_str)
+    # except json.JSONDecodeError:
+    #     return "Error: Invalid JSON string provided."
 
     base_url = "https://www.vola.ro/search_results"
 
@@ -38,10 +38,8 @@ def generate_vola_url(payload_str: str) -> str:
     query_params = {
         "from": origin_str,
         "to": dest_str,
-        "flex": "1" if payload["dates"].get("anytime") else "0",
-        "funit": "any" if payload["dates"].get("anytime") else "exact",
-        "ad": payload["passengers"].get("adults", 1),
-        "cc": "ECONOMY" # Assuming economy as default
+        # "ad": payload["passengers"].get("adults", 1),
+        # "cc": "ECONOMY" # Assuming economy as default
     }
 
     # 4. Handle Dates (Flexible vs. Exact)
@@ -55,11 +53,15 @@ def generate_vola_url(payload_str: str) -> str:
         if payload["dates"].get("returnFrom"):
             query_params["rd"] = payload["dates"]["returnFrom"]
 
+    query_params["ad"] = payload["passengers"].get("adults", 1)
+
     # 5. Handle Extra Passengers
     if payload["passengers"].get("children", 0) > 0:
         query_params["ch"] = payload["passengers"]["children"]
     if payload["passengers"].get("infants", 0) > 0:
         query_params["inf"] = payload["passengers"]["infants"]
+
+    query_params["cc"] = "ECONOMY"
 
     # 6. Generate and return the final URL
     return f"{base_url}?{urllib.parse.urlencode(query_params)}"
@@ -236,12 +238,13 @@ json_payload_string = """
 }
 """
 
+def extract_flights(json_payload_string):
 
-url = generate_vola_url(json_payload_string)
-print(url)
-flights = scrape_vola_flights(url)
-print(f"Scraped {len(flights)} flights:")
-for idx, flight in enumerate(flights, start=1):
-    print(f"\nFlight {idx}:")
-    for key, value in flight.items():
-        print(f"  {key}: {value}")
+    url = generate_vola_url(json_payload_string)
+    print(url)
+    flights = scrape_vola_flights(url)
+    print(f"Scraped {len(flights)} flights:")
+    for idx, flight in enumerate(flights, start=1):
+        print(f"\nFlight {idx}:")
+        for key, value in flight.items():
+            print(f"  {key}: {value}")

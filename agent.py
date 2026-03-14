@@ -1,9 +1,13 @@
 import ollama
 import json
 import torch
+import pymupdf4llm
 from torch._subclasses.functional_tensor import _conversion_method_template
 import re
+import pdfplumber
+import csv
 
+import url_gen_and_parsing
 
 print("GPU available:", torch.cuda.is_available())
 print("Device name:", torch.cuda.get_device_name(0))
@@ -72,6 +76,35 @@ def retrieve(query, top_n = 3):
 
     return similarities[:top_n]
 
+def get_cities_IATA():
+
+    pdf_file = "IATA-Code-List.pdf"
+    csv_file = "output.csv"
+
+    rows = []
+
+    with pdfplumber.open(pdf_file) as pdf:
+        for page in pdf.pages:
+            text = page.extract_text()
+            if text:
+                for line in text.split("\n"):
+                    rows.append([line])
+
+    with open(csv_file, "w", newline="", encoding="utf-8") as f:
+        writer = csv.writer(f)
+        writer.writerow(["content"])
+        writer.writerows(rows)
+
+    print("CSV generated:", csv_file)
+
+def read_csv_file_and_populate_embeddings_database():
+    with open('output.csv', "r", encoding="utf-8") as f:
+        csv_file = csv.reader(f)
+
+
+    return csv_file
+
+
 # Generation phase
 def generate():
     input_query = input('Ask me a question: ')
@@ -85,9 +118,9 @@ def generate():
 
         #instruction_prompt = f"You are a helpful chatbot." # + "Use only the following pieces of context to answer the question. Don't make up any new information:" + "{'\n'.join([f' - {chunk}' for chunk, similarity in retrieved_knowledge])}"
 
-    instruction_prompt = (f'You are a helpful chatbot that gets the input from user and tokenizes it and returns it in the JSON format/a list of elements in the following JSON format: '
-                              "{'dates': {'departureFrom': '','departureTo': '', 'returnFrom': '', 'returnTo': '', 'anytime': True, 'stayTime': {'min': 3, 'max': 7}}, 'passengers': {'adults': 1, 'children': 0, 'infants': 0,'youth': 0}, 'locations': {'origins': [{'code': 'BUH', 'type': 'CITY'}],'destinations': [{'code': '*', 'type': 'ANYWHERE'}]}, 'deduplicate': False, 'luggageOptions': { 'personalItemCount': 1, 'cabinTrolleyCount': 0, 'checkedBaggageCount': 0}}"
-                              "If the user does not provide all the required data, complete the missing data with '*'."
+    instruction_prompt = (f'You are a helpful chatbot that gets the input from user and tokenizes it and returns it in a JSON format like:'
+                              "{'dates': {'departureFrom': '','departureTo': '', 'returnFrom': '', 'returnTo': '', 'anytime': True/False, 'stayTime': {'min': '', 'max': ''}}, 'passengers': {'adults': 1, 'children': 0, 'infants': 0,'youth': 0}, 'locations': {'origins': [{'code': 'BUH', 'type': 'CITY'}],'destinations': [{'code': '*', 'type': 'ANYWHERE'}]}, 'deduplicate': False, 'luggageOptions': { 'personalItemCount': 1, 'cabinTrolleyCount': 0, 'checkedBaggageCount': 0}}"
+                              "If the user does not provide all the required data, complete the missing data with 0 or '', depending on the field."
                               "Do not generate random data. Use only what the user provides."
         )
         # formatam / continuam discutia pana cand toate datele/datele necesare au fost obtinute
@@ -112,20 +145,32 @@ def generate():
         print(current_chunk, end='', flush=True)
         response_text += current_chunk
 
-    data_dictionary = {}
+    # data_dictionary = {}
+    #
+    # # Extrage continutul JSON daca e in code block
+    # match = re.search(r'```json(.*?)```', response_text, re.DOTALL)
+    # json_text = match.group(1).strip() if match else response_text.strip()
+    #
+    # # Incarca sigur JSON
+    # data_dictionary = json.loads(json_text)
+    #
+    # print(data_dictionary)
 
-    # Extrage continutul JSON daca e in code block
-    match = re.search(r'```json(.*?)```', response_text, re.DOTALL)
-    json_text = match.group(1).strip() if match else response_text.strip()
+    formatted_response = response_text.replace('```', '').replace('json', '')
 
-    # Incarca sigur JSON
-    data_dictionary = json.loads(json_text)
-
-    print(data_dictionary)
+    url_gen_and_parsing.extract_flights(formatted_response)
 
     #print(type(data_dictionary))
 
 
 if __name__ == '__main__':
-    generate()
+    #get_cities_IATA()
+
+    dataset = read_csv_file_and_populate_embeddings_database()
+
+    for i, chunk in enumerate(dataset):
+        add_chunk_to_database(chunk)
+        print(f'Added chunk {i + 1}/{len(dataset)} to the database')
+
+    #generate()
 
