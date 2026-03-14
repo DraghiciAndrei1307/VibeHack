@@ -22,7 +22,7 @@ instruction_prompt = (
     '"locations": {"origins": [{"code": "BUH", "type": "CITY"}], "destinations": [{"code": "*", "type": "ANYWHERE"}]}, '
     '"deduplicate": false, '
     '"luggageOptions": {"personalItemCount": 1, "cabinTrolleyCount": 0, "checkedBaggageCount": 0}}. '
-    "Do not add any text outside of this JSON. Leave default values if user does not provide them."
+    "If user input for destination and departure matches an airport code, use that code, and the type field should be 'AIRPORT'. Do not add any text outside of this JSON. Leave default values if user does not provide them."
     f"Give results after the current_date: {TIME_NOW}"
 )
 
@@ -51,7 +51,7 @@ def talk(input_data):
     payload_dict = json.loads(json_str)
 
     # --- Folosire în funcția ta ---
-    url_gen_and_parsing.extract_flights(payload_dict)
+    flights = url_gen_and_parsing.extract_flights(payload_dict)
 
 if __name__ == '__main__':
 

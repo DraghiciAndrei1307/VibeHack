@@ -17,7 +17,7 @@ def extract_text_from_image(image_path):
 
 if __name__ == "__main__":
     
-    image_file = "Screenshot 2026-03-14 154321.png" 
+    image_file = "Screenshot 2026-03-14 191535.png" 
     
     text = extract_text_from_image(image_file)
     
