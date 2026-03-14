@@ -1,0 +1,16 @@
+curl ^"https://api.ith.toys/gateway/locations?locations=CITY:BUH,CITY:MLA^" ^
+  -H ^"accept: */*^" ^
+  -H ^"accept-language: en^" ^
+  -H ^"api-key: 7f6c921c-d7f8-4303-b9ad-b60878ca12ed^" ^
+  -H ^"origin: https://www.vola.ro^" ^
+  -H ^"priority: u=1, i^" ^
+  -H ^"referer: https://www.vola.ro/^" ^
+  -H ^"sec-ch-ua: ^\^"Not:A-Brand^\^";v=^\^"99^\^", ^\^"Google Chrome^\^";v=^\^"145^\^", ^\^"Chromium^\^";v=^\^"145^\^"^" ^
+  -H ^"sec-ch-ua-mobile: ?0^" ^
+  -H ^"sec-ch-ua-platform: ^\^"Windows^\^"^" ^
+  -H ^"sec-fetch-dest: empty^" ^
+  -H ^"sec-fetch-mode: cors^" ^
+  -H ^"sec-fetch-site: cross-site^" ^
+  -H ^"slot: volaNoExtraViFeesIncreased^" ^
+  -H ^"user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36^" ^
+  -H ^"x-affiliate: vola^"

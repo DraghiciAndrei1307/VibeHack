@@ -1,16 +1,16 @@
-import ollama
+#import ollama
 import json
-import torch
-import pymupdf4llm
-from torch._subclasses.functional_tensor import _conversion_method_template
+#import torch
+#import pymupdf4llm
+#from torch._subclasses.functional_tensor import _conversion_method_template
 import re
 import pdfplumber
 import csv
 
 import url_gen_and_parsing
 
-print("GPU available:", torch.cuda.is_available())
-print("Device name:", torch.cuda.get_device_name(0))
+# print("GPU available:", torch.cuda.is_available())
+# print("Device name:", torch.cuda.get_device_name(0))
 
 # Read the documents provided
 
