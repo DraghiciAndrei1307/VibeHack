@@ -28,7 +28,7 @@ instruction_prompt = (
 
 def talk(input_data):
     response = client.chat.completions.create(
-        model="deepseek-ai/DeepSeek-V3.2",
+        model="deepseek-ai/DeepSeek-V3.1",
         messages=[
             {"role": "system", "content": instruction_prompt},
             {"role": "user", "content": input_data}
