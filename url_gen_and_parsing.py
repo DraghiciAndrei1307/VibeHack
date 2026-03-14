@@ -47,12 +47,21 @@ def generate_vola_url(payload) -> str:
     if payload["dates"].get("anytime"):
         query_params["fdmin"] = payload["dates"]["stayTime"]["min"]
         query_params["fdmax"] = payload["dates"]["stayTime"]["max"]
+    elif payload["dates"].get("departureFrom") and payload["dates"].get("departureTo") == payload["dates"].get("departureFrom") and payload["dates"].get("returnFrom") and payload["dates"].get("returnTo") == payload["dates"].get("returnFrom"):
+        query_params["dd"] = payload["dates"]["departureFrom"]
+        query_params["rd"] = payload["dates"]["returnFrom"]
+
     else:
         # If not anytime, use the exact departure and return dates
+        query_params["range"] = "1"
         if payload["dates"].get("departureFrom"):
-            query_params["dd"] = payload["dates"]["departureFrom"]
+            query_params["ddfrom"] = payload["dates"]["departureFrom"]
+        if payload["dates"].get("departureTo"):
+            query_params["ddto"] = payload["dates"]["departureTo"]
         if payload["dates"].get("returnFrom"):
-            query_params["rd"] = payload["dates"]["returnFrom"]
+            query_params["rdfrom"] = payload["dates"]["returnFrom"]
+        if payload["dates"].get("returnTo"):
+            query_params["rdto"] = payload["dates"]["returnTo"]
 
     query_params["ad"] = payload["passengers"].get("adults", 1)
 
@@ -249,3 +258,4 @@ def extract_flights(json_payload_string):
         print(f"\nFlight {idx}:")
         for key, value in flight.items():
             print(f"  {key}: {value}")
+    return flights
