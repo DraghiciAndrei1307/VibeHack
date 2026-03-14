@@ -40,8 +40,8 @@ def generate_vola_url(payload_str: str) -> str:
         "to": dest_str,
         "flex": "1" if payload["dates"].get("anytime") else "0",
         "funit": "any" if payload["dates"].get("anytime") else "exact",
-        "ad": payload["passengers"].get("adults", 1),
-        "cc": "ECONOMY" # Assuming economy as default
+        # "ad": payload["passengers"].get("adults", 1),
+        # "cc": "ECONOMY" # Assuming economy as default
     }
 
     # 4. Handle Dates (Flexible vs. Exact)
@@ -54,12 +54,14 @@ def generate_vola_url(payload_str: str) -> str:
             query_params["dd"] = payload["dates"]["departureFrom"]
         if payload["dates"].get("returnFrom"):
             query_params["rd"] = payload["dates"]["returnFrom"]
-
+    query_params["ad"] = payload["passengers"].get("adults", 1)
     # 5. Handle Extra Passengers
     if payload["passengers"].get("children", 0) > 0:
         query_params["ch"] = payload["passengers"]["children"]
     if payload["passengers"].get("infants", 0) > 0:
         query_params["inf"] = payload["passengers"]["infants"]
+    
+    query_params["cc"] = "ECONOMY"
 
     # 6. Generate and return the final URL
     return f"{base_url}?{urllib.parse.urlencode(query_params)}"
