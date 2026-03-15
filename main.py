@@ -12,34 +12,40 @@ INSTANCE = os.getenv("INSTANCE_NAME")
 
 @app.route("/webhook", methods=["POST"])
 def webhook():
-    # Preluăm datele JSON trimise de Evolution API
     payload = request.get_json()
 
     if not payload:
         return jsonify({"ignored": True}), 400
 
     try:
-        # Navigăm prin structura payload-ului Evolution API
-        message = payload["data"]["message"]["conversation"].lower()
-        remote_jid = payload["data"]["key"]["remoteJid"]
-        # Extragem doar numărul de telefon
+        data = payload.get("data", {})
+
+        # PASUL CRITIC: Dacă fromMe este True, înseamnă că botul a trimis mesajul.
+        # Îl ignorăm ca să nu facem buclă!
+        if data.get("key", {}).get("fromMe") is True:
+            return jsonify({"status": "ignored", "reason": "sent_by_me"}), 200
+
+        msg_obj = data.get("message", {})
+        message = (msg_obj.get("conversation") or
+                   msg_obj.get("extendedTextMessage", {}).get("text") or
+                   "").lower()
+
+        remote_jid = data.get("key", {}).get("remoteJid")
         number = remote_jid.split("@")[0]
-    except (KeyError, TypeError):
-        # Dacă structura nu coincide (ex: mesaje de tip imagine sau status), ignorăm
+
+        # Logica de răspuns (rămâne la fel)
+        if "hi" in message or "hello" in message:
+            reply = "👋 Hello! What would you like to do?\n1️⃣ Book appointment\n2️⃣ Help"
+            send_message(number, reply)
+        elif "help" in message:
+            reply = "ℹ️ I can help you book appointments."
+            send_message(number, reply)
+
+    except Exception as e:
+        print(f"Eroare: {e}")
         return jsonify({"ignored": True}), 200
 
-    # Logică de răspuns
-    reply = "👋 Hi!\n1️⃣ Book appointment\n2️⃣ Help"
-
-    if "hi" in message or "hello" in message:
-        reply = "👋 Hello! What would you like to do?\n1️⃣ Book appointment\n2️⃣ Help"
-    elif "help" in message:
-        reply = "ℹ️ I can help you book appointments via WhatsApp."
-
-    # Trimitem răspunsul înapoi
-    send_status = send_message(number, reply)
-
-    return jsonify({"status": "sent", "evolution_response": send_status}), 200
+    return jsonify({"status": "success"}), 200
 
 
 @app.route("/", methods=["GET"])
