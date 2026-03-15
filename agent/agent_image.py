@@ -1,6 +1,8 @@
 import json
+import os
 import re
 from io import BytesIO
+import sys
 
 import requests
 from PIL import Image
@@ -9,6 +11,7 @@ from openai import OpenAI
 from datetime import datetime   
 
 # Presupunem că acest fișier există deja în folderul tău
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import url_gen_and_parsing
 
 reader = easyocr.Reader(['en', 'ro'],gpu = True)
@@ -17,7 +20,7 @@ class AgentImage:
     def __init__(self):
         self.client = OpenAI(
             base_url="https://api.featherless.ai/v1",
-            api_key="rc_d19a3d709759a2023185f5d7f7c0d0386791612fbf32d028a79603cae7e7d763"
+            api_key=""
         )
 
     def extrage_text_din_poza(self, image_url: str):
@@ -91,9 +94,19 @@ class AgentImage:
             else:
                 msg += f"✅ Prețul tău este excelent. Cea mai bună ofertă găsită: {pret_nou}€\n"
 
-            msg += f"\nDetalii cel mai bun zbor:\n🛫 {flights[0]['departure']['date']} | {flights[0]['price']}"
+            f = flights[0]
+            departure = f.get('departure') or {}
+            ret = f.get('return') or {}
+            msg += "\n*Detalii cel mai bun zbor:*\n"
+            msg += f"*{f.get('price', 'N/A')}*\n"
+            msg += f"🛫 *Plecare:* {departure.get('date', 'N/A')}\n"
+            msg += f"   _{departure.get('takeoff', {}).get('time', 'N/A')} ({departure.get('takeoff', {}).get('city', 'N/A')})_ -> "
+            msg += f"_{departure.get('landing', {}).get('time', 'N/A')} ({departure.get('landing', {}).get('airport', 'N/A')})_\n"
+            msg += f"🛬 *Retur:* {ret.get('date', 'N/A')}\n"
+            msg += f"   _{ret.get('takeoff', {}).get('time', 'N/A')} ({ret.get('takeoff', {}).get('city', 'N/A')})_ -> "
+            msg += f"_{ret.get('landing', {}).get('time', 'N/A')} ({ret.get('landing', {}).get('airport', 'N/A')})_\n"
+            msg += f"⏳ *Durată:* {f.get('stay_duration', 'N/A')}\n"
             return msg
 
         except Exception as e:
             return f"⚠️ Eroare la procesarea AI: {str(e)}"
-            
