@@ -10,7 +10,7 @@ import requests
 # 1. API CREDENTIALS
 # ==========================================
 client = OpenAI(
-    api_key="", # Your key
+    api_key= os.environ.get("API_KEY"),
     base_url="https://api.featherless.ai/v1" 
 )
 

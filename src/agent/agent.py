@@ -5,13 +5,10 @@ import sys
 from openai import OpenAI
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-import url_gen_and_parsing
+import integrations.url_gen_and_parsing as url_gen_and_parsing
 
 from datetime import datetime
 
-
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-import url_gen_and_parsing
 
 TIME_NOW = datetime.now()
 
@@ -20,7 +17,7 @@ class Agent:
 
         self.client = OpenAI(
             base_url="https://api.featherless.ai/v1",
-            api_key=""
+            api_key= os.environ.get("API_KEY")
         )
 
         self.instruction_prompt = (

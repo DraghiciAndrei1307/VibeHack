@@ -2,6 +2,7 @@ import os
 import sys
 import tempfile
 import requests
+import traceback
 
 from flask import Flask, request
 from twilio.twiml.messaging_response import MessagingResponse
@@ -10,7 +11,7 @@ from twilio.rest import Client  # Twilio REST client
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from agent.agent import Agent
 from agent.agent_image import AgentImage
-from location_finder import (
+from agent.location_finder import (
     _download_media_to_temp,
     identify_location_from_url,
     encode_and_resize_image,
@@ -68,13 +69,13 @@ def classify_image_type(media_url):
 app = Flask(__name__)
 
 # Datele tale de la Twilio
-account_sid = ''
-auth_token = ''
+account_sid = os.environ.get("SID")
+auth_token = os.environ.get("AUTH_TOKEN")
 client = Client(account_sid, auth_token)
 
 
 def process_logic(user_msg, media_url, sender_number):
-    log(f"[THREAD] Started processing for {sender_number}: text={user_msg[:50]!r}... media={bool(media_url)}")
+    print(f"[THREAD] Started processing for {sender_number}: text={user_msg[:50]!r}... media={bool(media_url)}")
     try:
         if media_url:
             # Caz 1: Utilizatorul a trimis o poză – clasificăm: screenshot de zbor sau poză de loc
@@ -117,10 +118,10 @@ def process_logic(user_msg, media_url, sender_number):
             body=response_text[:1600],
             to=sender_number
         )
-        log(f"[THREAD] Follow-up message sent OK")
+        print(f"[THREAD] Follow-up message sent OK")
 
     except Exception as e:
-        log(f"[THREAD] ERROR: {e}")
+        print(f"[THREAD] ERROR: {e}")
         traceback.print_exc()
         try:
             client.messages.create(
@@ -128,14 +129,14 @@ def process_logic(user_msg, media_url, sender_number):
                 body="⚠️ A apărut o problemă la procesarea cererii tale.",
                 to=sender_number
             )
-            log("[THREAD] Error fallback message sent")
+            print("[THREAD] Error fallback message sent")
         except Exception as send_err:
-            log(f"[THREAD] Failed to send error message to user: {send_err}")
+            print(f"[THREAD] Failed to send error message to user: {send_err}")
 
 
 @app.route("/message", methods=["POST"])
 def message():
-    log("[FLASK] Incoming POST /message (request reached this Flask app)")
+    print("[FLASK] Incoming POST /message (request reached this Flask app)")
     user_msg = (request.values.get('Body') or '').lower()
     sender_number = request.values.get('From') or ''
     try:
@@ -155,12 +156,12 @@ def message():
     response = MessagingResponse()
     msg = "Analizez imaginea..." if media_url else "Caut zborurile solicitate..."
     response.message(msg)
-    log(f"[FLASK] Sending immediate TwiML reply, thread started for {sender_number}")
+    print(f"[FLASK] Sending immediate TwiML reply, thread started for {sender_number}")
     return str(response)
 
 
 if __name__ == "__main__":
-    log("Starting Flask server on http://0.0.0.0:5001 (use ngrok http 5001 and set Twilio webhook to https://YOUR_URL/message)")
+    print("Starting Flask server on http://0.0.0.0:5001 (use ngrok http 5001 and set Twilio webhook to https://YOUR_URL/message)")
     # use_reloader=False is required when using background threads:
     # otherwise the reloader can restart the process and kill the thread
     # before it sends the follow-up WhatsApp message.

@@ -13,7 +13,7 @@ from datetime import datetime
 
 # Presupunem că acest fișier există deja în folderul tău
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-import url_gen_and_parsing
+import integrations.url_gen_and_parsing as url_gen_and_parsing
 
 reader = easyocr.Reader(['en', 'ro'],gpu = True)
 
@@ -21,7 +21,7 @@ class AgentImage:
     def __init__(self):
         self.client = OpenAI(
             base_url="https://api.featherless.ai/v1",
-            api_key=""
+            api_key= os.environ.get("API_KEY")
         )
 
     def extrage_text_din_poza(self, image_url: str):
