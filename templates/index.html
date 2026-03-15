@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{{ super() }}
+
+<header
+  class="masthead"
+  style="background-image: url('../static/assets/img/atlas.jpg')"
+>
+  <div class="container position-relative px-4 px-lg-5">
+    <div class="row gx-4 gx-lg-5 justify-content-center">
+      <div class="col-md-10 col-lg-8 col-xl-7">
+        <div class="site-heading">
+          <h1>ATLAS</h1>
+          <span class="subheading">The best AI solution in town. Try it!</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="b-example-divider"></div>
+
+  <div class="container px-4 py-5" id="hanging-icons" style=" font-family: 'Source Serif 4', serif;">
+    <h2 class="pb-2 border-bottom" style=" font-family: 'Source Serif 4', serif;">
+      Features
+    </h2>
+    <div class="row g-4 py-5 row-cols-1 row-cols-lg-3" >
+      <div class="col d-flex align-items-start">
+        <div class="icon-square text-body-emphasis bg-body-secondary d-inline-flex align-items-center justify-content-center fs-4 flex-shrink-0 me-3">
+          <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" aria-hidden="true" fill="currentColor" class="bi bi-airplane-engines" viewBox="0 0 16 16">
+            <path d="M8 0c-.787 0-1.292.592-1.572 1.151A4.35 4.35 0 0 0 6 3v3.691l-2 1V7.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.191l-1.17.585A1.5 1.5 0 0 0 0 10.618V12a.5.5 0 0 0 .582.493l1.631-.272.313.937a.5.5 0 0 0 .948 0l.405-1.214 2.21-.369.375 2.253-1.318 1.318A.5.5 0 0 0 5.5 16h5a.5.5 0 0 0 .354-.854l-1.318-1.318.375-2.253 2.21.369.405 1.214a.5.5 0 0 0 .948 0l.313-.937 1.63.272A.5.5 0 0 0 16 12v-1.382a1.5 1.5 0 0 0-.83-1.342L14 8.691V7.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v.191l-2-1V3c0-.568-.14-1.271-.428-1.849C9.292.591 8.787 0 8 0M7 3c0-.432.11-.979.322-1.401C7.542 1.159 7.787 1 8 1s.458.158.678.599C8.889 2.02 9 2.569 9 3v4a.5.5 0 0 0 .276.447l5.448 2.724a.5.5 0 0 1 .276.447v.792l-5.418-.903a.5.5 0 0 0-.575.41l-.5 3a.5.5 0 0 0 .14.437l.646.646H6.707l.647-.646a.5.5 0 0 0 .14-.436l-.5-3a.5.5 0 0 0-.576-.411L1 11.41v-.792a.5.5 0 0 1 .276-.447l5.448-2.724A.5.5 0 0 0 7 7z"/>
+          </svg>
+        </div>
+        <div>
+          <h3 class="fs-2 text-body-emphasis" style=" font-family: 'Source Serif 4', serif;">
+            Chat with different models
+          </h3>
+          <p style=" font-family: 'Source Serif 4', serif;">
+            Using ATLAS, you are able to talk with different models.
+          </p>
+          <a href="{{ url_for('new_chat') }}" class="btn btn-primary" {% if not logged_in %} disabled {% endif %}  style=" font-family: 'Source Serif 4', serif;">
+            Chat with ATLAS
+          </a>
+        </div>
+      </div>
+      <div class="col d-flex align-items-start">
+        <div class="icon-square text-body-emphasis bg-body-secondary d-inline-flex align-items-center justify-content-center fs-4 flex-shrink-0 me-3">
+          <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" aria-hidden="true" fill="currentColor" class="bi bi-airplane-engines" viewBox="0 0 16 16">
+            <path d="M8 0c-.787 0-1.292.592-1.572 1.151A4.35 4.35 0 0 0 6 3v3.691l-2 1V7.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.191l-1.17.585A1.5 1.5 0 0 0 0 10.618V12a.5.5 0 0 0 .582.493l1.631-.272.313.937a.5.5 0 0 0 .948 0l.405-1.214 2.21-.369.375 2.253-1.318 1.318A.5.5 0 0 0 5.5 16h5a.5.5 0 0 0 .354-.854l-1.318-1.318.375-2.253 2.21.369.405 1.214a.5.5 0 0 0 .948 0l.313-.937 1.63.272A.5.5 0 0 0 16 12v-1.382a1.5 1.5 0 0 0-.83-1.342L14 8.691V7.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v.191l-2-1V3c0-.568-.14-1.271-.428-1.849C9.292.591 8.787 0 8 0M7 3c0-.432.11-.979.322-1.401C7.542 1.159 7.787 1 8 1s.458.158.678.599C8.889 2.02 9 2.569 9 3v4a.5.5 0 0 0 .276.447l5.448 2.724a.5.5 0 0 1 .276.447v.792l-5.418-.903a.5.5 0 0 0-.575.41l-.5 3a.5.5 0 0 0 .14.437l.646.646H6.707l.647-.646a.5.5 0 0 0 .14-.436l-.5-3a.5.5 0 0 0-.576-.411L1 11.41v-.792a.5.5 0 0 1 .276-.447l5.448-2.724A.5.5 0 0 0 7 7z"/>
+          </svg>
+        </div>
+        <div>
+          <h3 class="fs-2 text-body-emphasis" style=" font-family: 'Source Serif 4', serif;">
+            Featured title
+          </h3>
+          <p style=" font-family: 'Source Serif 4', serif;">
+            Paragraph of text beneath the heading to explain the heading. We'll add onto it with another sentence
+            and probably just keep going until we run out of words.
+          </p>
+          <a href="#" class="btn btn-primary" style=" font-family: 'Source Serif 4', serif;">
+            Primary button
+          </a>
+        </div>
+      </div>
+      <div class="col d-flex align-items-start">
+        <div class="icon-square text-body-emphasis bg-body-secondary d-inline-flex align-items-center justify-content-center fs-4 flex-shrink-0 me-3">
+          <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" aria-hidden="true" fill="currentColor" class="bi bi-airplane-engines" viewBox="0 0 16 16">
+            <path d="M8 0c-.787 0-1.292.592-1.572 1.151A4.35 4.35 0 0 0 6 3v3.691l-2 1V7.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.191l-1.17.585A1.5 1.5 0 0 0 0 10.618V12a.5.5 0 0 0 .582.493l1.631-.272.313.937a.5.5 0 0 0 .948 0l.405-1.214 2.21-.369.375 2.253-1.318 1.318A.5.5 0 0 0 5.5 16h5a.5.5 0 0 0 .354-.854l-1.318-1.318.375-2.253 2.21.369.405 1.214a.5.5 0 0 0 .948 0l.313-.937 1.63.272A.5.5 0 0 0 16 12v-1.382a1.5 1.5 0 0 0-.83-1.342L14 8.691V7.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v.191l-2-1V3c0-.568-.14-1.271-.428-1.849C9.292.591 8.787 0 8 0M7 3c0-.432.11-.979.322-1.401C7.542 1.159 7.787 1 8 1s.458.158.678.599C8.889 2.02 9 2.569 9 3v4a.5.5 0 0 0 .276.447l5.448 2.724a.5.5 0 0 1 .276.447v.792l-5.418-.903a.5.5 0 0 0-.575.41l-.5 3a.5.5 0 0 0 .14.437l.646.646H6.707l.647-.646a.5.5 0 0 0 .14-.436l-.5-3a.5.5 0 0 0-.576-.411L1 11.41v-.792a.5.5 0 0 1 .276-.447l5.448-2.724A.5.5 0 0 0 7 7z"/>
+          </svg>
+        </div>
+        <div>
+          <h3 class="fs-2 text-body-emphasis" style=" font-family: 'Source Serif 4', serif;">
+            Featured title
+          </h3>
+          <p style=" font-family: 'Source Serif 4', serif;">
+            Paragraph of text beneath the heading to explain the heading. We'll add onto it with another sentence
+            and probably just keep going until we run out of words.
+          </p>
+          <a href="#" class="btn btn-primary" style=" font-family: 'Source Serif 4', serif;">
+            Primary button
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

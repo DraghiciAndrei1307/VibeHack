@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{{ super() }}
+
+<div class="container col-xl-10 col-xxl-8 px-4 py-5">
+  <div class="row align-items-center g-lg-5 py-5">
+    <div class="col-lg-7 text-center text-lg-start">
+      <h1 class="display-4 fw-bold lh-1 text-body-emphasis mb-3">Your best AI solution!</h1>
+      <p class="col-lg-10 fs-4">
+        Extend your productivity using AI capabilities for free!
+      </p>
+    </div>
+    <div class="col-md-10 mx-auto col-lg-5">
+
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          <p class="flash">{{ messages[0] }}</p>
+        {% endif %}
+      {% endwith %}
+
+      <form class="p-4 p-md-5 border rounded-3 bg-body-tertiary" action="{{ url_for('login') }}" method="POST">
+        {{ form.hidden_tag() }}
+
+        <div class="form-floating mb-3">
+          {{ form.email(type='email', class="form-control", style="width=100%; padding", maxlength=200) }}
+          {{ form.email.label }}
+        </div>
+        <div class="form-floating mb-3">
+          {{ form.password(type='password', class="form-control", style="width=100%; padding", maxlength=200) }}
+          {{ form.password.label }}
+        </div>
+
+        {{ form.submit(type="submit", class="w-100 btn btn-lg btn-primary") }}
+        <hr class="my-4">
+        <small class="text-body-secondary">
+          Log in and enhance your capabilities!
+        </small>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
