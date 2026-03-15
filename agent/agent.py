@@ -2,8 +2,10 @@ import json
 import os
 import re
 import sys
-
 from openai import OpenAI
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+import url_gen_and_parsing
 
 from datetime import datetime
 
@@ -18,7 +20,7 @@ class Agent:
 
         self.client = OpenAI(
             base_url="https://api.featherless.ai/v1",
-            api_key="rc_d19a3d709759a2023185f5d7f7c0d0386791612fbf32d028a79603cae7e7d763"
+            api_key=""
         )
 
         self.instruction_prompt = (
@@ -35,7 +37,7 @@ class Agent:
 
     def talk(self, input_data):
         response = self.client.chat.completions.create(
-            model="deepseek-ai/DeepSeek-V3.1",
+            model="deepseek-ai/DeepSeek-V3.2",
             messages=[
                 {"role": "system", "content": self.instruction_prompt},
                 {"role": "user", "content": input_data}

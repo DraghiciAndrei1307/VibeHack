@@ -197,7 +197,7 @@ def scrape_vola_flights(url: str) -> list:
                     # We also add an English fallback regex just in case
                     eng_price_match = re.search(r'Price:\s*(\d+\s*€)', raw_actions_text)
                     if eng_price_match:
-                         flight_data['price'] = eng_price_match.group(1)
+                        flight_data['price'] = eng_price_match.group(1)
                     else:
                          flight_data['price_raw_actions_block'] = raw_actions_text
 

@@ -1,34 +1,75 @@
 import os
 import sys
-import traceback
-
-# Force unbuffered output so logs appear immediately in the terminal
-try:
-    if hasattr(sys.stdout, 'reconfigure'):
-        sys.stdout.reconfigure(line_buffering=True)
-    if hasattr(sys.stderr, 'reconfigure'):
-        sys.stderr.reconfigure(line_buffering=True)
-except Exception:
-    pass
-
-def log(msg):
-    """Print and flush so it shows up in terminal immediately."""
-    print(msg, flush=True)
+import tempfile
+import requests
 
 from flask import Flask, request
 from twilio.twiml.messaging_response import MessagingResponse
-from twilio.rest import Client # Importă clientul REST
+from twilio.rest import Client  # Twilio REST client
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from agent.agent import Agent
 from agent.agent_image import AgentImage
+from location_finder import (
+    _download_media_to_temp,
+    identify_location_from_url,
+    encode_and_resize_image,
+    client as gemma_client,
+    MODEL_NAME as GEMMA_MODEL,
+)
 import threading
+
+def classify_image_type(media_url):
+    """
+    Use the same Gemma vision model as location_finder to classify the image:
+    SCREENSHOT = flight/booking screenshot, PLACE = photo of a real-world location.
+    Returns "SCREENSHOT" or "PLACE". Defaults to "SCREENSHOT" on any error.
+    """
+    path = None
+    try:
+        path = _download_media_to_temp(media_url)
+        base64_image = encode_and_resize_image(path)
+        if not base64_image:
+            return "SCREENSHOT"
+        prompt_text = (
+            "Look at this image. Reply with exactly one word: either SCREENSHOT or PLACE. "
+            "SCREENSHOT = the image is a screenshot from a phone or computer showing flight details, "
+            "booking confirmation, flight search results, or airline/booking app content. "
+            "PLACE = the image is a photo of a real-world location (street, building, landscape, "
+            "city, nature) that could be identified by its appearance. Reply only with the word SCREENSHOT or PLACE."
+        )
+        messages = [
+            {
+                "role": "user",
+                "content": [
+                    {"type": "text", "text": prompt_text},
+                    {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{base64_image}"}},
+                ],
+            }
+        ]
+        chat_response = gemma_client.chat.completions.create(
+            model=GEMMA_MODEL,
+            messages=messages,
+            max_tokens=20,
+            temperature=0.0,
+            timeout=30.0,
+        )
+        text = (chat_response.choices[0].message.content or "").strip().upper()
+        return "PLACE" if "PLACE" in text else "SCREENSHOT"
+    except Exception:
+        return "SCREENSHOT"
+    finally:
+        if path and os.path.exists(path):
+            try:
+                os.unlink(path)
+            except Exception:
+                pass
 
 app = Flask(__name__)
 
 # Datele tale de la Twilio
-account_sid = 'AC9cf9b2a16ae5022eb7e37e4bf8089a6e'
-auth_token = '8fa4c911c5aae481fdda514123aeb0e9'
+account_sid = ''
+auth_token = ''
 client = Client(account_sid, auth_token)
 
 
@@ -36,9 +77,14 @@ def process_logic(user_msg, media_url, sender_number):
     log(f"[THREAD] Started processing for {sender_number}: text={user_msg[:50]!r}... media={bool(media_url)}")
     try:
         if media_url:
-            # Caz 1: Utilizatorul a trimis o poză
-            img_agent = AgentImage()
-            response_text = img_agent.find_cheaper_flight(media_url)
+            # Caz 1: Utilizatorul a trimis o poză – clasificăm: screenshot de zbor sau poză de loc
+            image_kind = classify_image_type(media_url)
+            if image_kind == "PLACE":
+                response_text = identify_location_from_url(media_url)
+            else:
+                # Screenshot cu detalii de zbor – tratament neschimbat
+                img_agent = AgentImage()
+                response_text = img_agent.find_cheaper_flight(media_url)
         else:
             # Caz 2: Utilizatorul a trimis doar text
             new_agent = Agent()
@@ -66,8 +112,6 @@ def process_logic(user_msg, media_url, sender_number):
                     msg_parts.append(flight_info)
                 response_text = "\n".join(msg_parts)
 
-        # Trimitere finală pe WhatsApp
-        log(f"[THREAD] Sending follow-up message to {sender_number} ({len(response_text)} chars)")
         client.messages.create(
             from_='whatsapp:+14155238886',
             body=response_text[:1600],
