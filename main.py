@@ -2,7 +2,6 @@ import os
 
 from flask import Flask, request, jsonify, Response, render_template, flash, redirect, url_for, g
 from flask_bootstrap import Bootstrap
-from flask_ckeditor import CKEditor
 from flask_login import UserMixin, login_user, LoginManager, current_user, logout_user, login_required
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship, DeclarativeBase, Mapped, mapped_column, sessionmaker
@@ -15,7 +14,6 @@ from werkzeug.security import generate_password_hash, check_password_hash
 app = Flask(__name__)
 
 app.config['SECRET_KEY'] = "some_private_key"
-ckeditor = CKEditor(app)
 Bootstrap(app)
 
 # Configure Flask-Login
