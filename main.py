@@ -42,6 +42,10 @@ def webhook():
     return jsonify({"status": "sent", "evolution_response": send_status}), 200
 
 
+@app.route("/", methods=["GET"])
+def home():
+    return "Botul este online!", 200
+
 def send_message(number, text):
     url = f"{EVOLUTION_API}/message/sendText/{INSTANCE}"
     headers = {
