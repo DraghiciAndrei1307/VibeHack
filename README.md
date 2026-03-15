@@ -1,30 +1,86 @@
 # VibeHack
 
-## TO-DO
+## Description
 
-Agent has 4 features
+This is the solution that the 'Two Devs One Repo' team developed during a 2-day VibeHack hackathon. It was a nice 
+challenge from which we had a lot of things to learn. 
 
-    -  Planning via natural conversation - User asks - Agent takes the question, extracts the necessary data, normalizes it 
-    and uses it to scrap data using selenium. If the data is incomplete, it will require more data from the user. Before it starts 
-    -  
+## How to use
 
+1) The first thing you have to do is to clone this repo, using the following command:
+
+```commandline
+git clone https://github.com/DraghiciAndrei1307/VibeHack.git
+```
+2) The second thing you have to do is to create yourself a virtual environment (you need to have Python 3 installed on 
+your machine), using the following commands to create and load it:
+
+```commandline
+python3 -m venv .venv
+
+source .venv/bin/activate
+```
+
+3) Before you run this project, you will have to install all the requirements contained by the requirements.txt:
+
+```commandline
+pip install -r requirements.txt
+```
+
+4) After you installed all prerequisites, you need to create the environment variables (the SID, TOKEN and API_KEY). 
+Make sure you add them at the end of the ~/.venv/bin/activate file and then you reload the environment.
+
+```commandline
+export API_KEY=<your_featherless_ai_key>_
+export SID=<your_Twillio_sid>
+export TOKEN=<your_Twillio_token>
+
+source .venv/bin/active
+```
+
+5) Another important thing that we used was the ngrok which is ' all-in-one cloud networking platform that secures, 
+transforms, and routes your traffic to services running anywhere'. 
+
+To use ngrok, you need to create an account here: https://ngrok.com/ 
+
+After you created an account there, you need to add your private authtoken:
+
+```commandline
+ngrok config add-authtoken <your_private_ngrok_token>
+```
+
+Next, you have to run the ngrok on you local host (on a designated opened port that you are working on):
+
+```commandline
+ngrok http 9000
+```
 
 ```terminaloutput
-
-curl ^"https://www.google.de/ads/ga-audiences?v=1^&t=sr^&slf_rd=1^&_r=4^&dma=1^&dma_cps=a^&npa=0^&gcs=G111^&gcd=13r3rPr2r5l1^&tid=G-NLJWL2VREQ^&cid=1702827004.1773479013^&gtm=45j91e63b1v883615754z89218454210z99182859849za20kzb9218454210zd9218454210^&tag_exp=103116026~103200004~115938466~115938468~116024733~116024736~117215455~117215456~117215458~117484252^&_is_sw=0^&_tu=TA^&aip=1^&z=948481129^" ^
-  -H ^"accept: */*^" ^
-  -H ^"accept-language: en-GB,en-US;q=0.9,en;q=0.8,ro;q=0.7^" ^
-  -H ^"priority: u=1, i^" ^
-  -H ^"referer: https://www.vola.ro/^" ^
-  -H ^"sec-fetch-dest: empty^" ^
-  -H ^"sec-fetch-mode: no-cors^" ^
-  -H ^"sec-fetch-site: cross-site^" ^
-  -H ^"sec-fetch-storage-access: active^" ^
-  -H ^"user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36^" ^
-  -H ^"x-browser-channel: stable^" ^
-  -H ^"x-browser-copyright: Copyright 2026 Google LLC. All Rights reserved.^" ^
-  -H ^"x-browser-validation: mGtxj/IERUi4uQ9hLSvZZF4DQgA=^" ^
-  -H ^"x-browser-year: 2026^" ^
-  -H ^"x-client-data: CJa2yQEIpLbJAQipncoBCMSTywEIkqHLAQiFoM0BCJuszwEI3bDPAQjTsc8BGL6pygEYsLfPAQ==^"
-
+ngrok                                                                                                                          (Ctrl+C to quit)
+                                                                                                                                               
+🚪 One gateway for every AI model. Available in early access now: https://ngrok.com/r/ai                                                     
+                                                                                                                                               
+Session Status                online                                                                                                           
+Account                       draghiciandrei122@gmail.com (Plan: Free)                                                                         
+Version                       3.37.2                                                                                                           
+Region                        Europe (eu)                                                                                                      
+Latency                       58ms                                                                                                             
+Web Interface                 http://127.0.0.1:4040                                                                                            
+Forwarding                    https://unhastily-leafed-nell.ngrok-free.dev -> http://localhost:5001                                            
+                                                                                                                                               
+Connections                   ttl     opn     rt1     rt5     p50     p90                                                                      
+                              3       0       0.00    0.00    0.02    0.02                                                                     
+                                                                                                                                               
+HTTP Requests                                                                                                                                  
+-------------
 ```
+
+Basically, all traffic that the ngrok endpoint `https://unhastily-leafed-nell.ngrok-free.dev` receives is redirected to 
+the localhost endpoint `localhost` through port 5001. 
+ 
+## What makes this project special? 
+
+
+
+
+
