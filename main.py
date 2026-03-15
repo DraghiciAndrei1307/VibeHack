@@ -2,6 +2,8 @@ from flask import Flask, request, jsonify
 import requests
 import os
 
+from agent.agent import Agent
+
 app = Flask(__name__)
 
 # Configurații din variabile de mediu
@@ -10,8 +12,41 @@ API_KEY = os.getenv("EVOLUTION_API_KEY")
 INSTANCE = os.getenv("INSTANCE_NAME")
 
 
+def talk(user_msg):
+    new_agent = Agent()
+    flights = new_agent.talk(user_msg)
+
+    response_text = ''
+
+    if not flights or not isinstance(flights, list):
+        response_text = "Nu am găsit zboruri pentru cererea ta."
+    else:
+        msg_parts = ["✈️ *Zboruri găsite:* \n"]
+        for i, f in enumerate(flights[:5], 1):
+            departure = f.get('departure', {})
+            ret = f.get('return', {})
+
+            flight_info = (
+                f"*{i}. {f.get('price', 'N/A')}*\n"
+                f"🛫 *Plecare:* {departure.get('date')}\n"
+                f"   _{departure.get('takeoff', {}).get('time')} ({departure.get('takeoff', {}).get('city')})_ -> "
+                f"_{departure.get('landing', {}).get('time')} ({departure.get('landing', {}).get('airport')})_\n"
+                f"🛬 *Retur:* {ret.get('date')}\n"
+                f"   _{ret.get('takeoff', {}).get('time')} ({ret.get('takeoff', {}).get('city')})_ -> "
+                f"_{ret.get('landing', {}).get('time')} ({ret.get('landing', {}).get('airport')})_\n"
+                f"⏳ *Durată:* {f.get('stay_duration')}\n"
+                f"{'─' * 15}"
+            )
+            msg_parts.append(flight_info)
+        response_text = "\n".join(msg_parts)
+
+    return response_text
+
+
 @app.route("/webhook", methods=["POST"])
 def webhook():
+
+
     payload = request.get_json()
 
     if not payload:
@@ -30,16 +65,22 @@ def webhook():
                    msg_obj.get("extendedTextMessage", {}).get("text") or
                    "").lower()
 
-        remote_jid = data.get("key", {}).get("remoteJid")
-        number = remote_jid.split("@")[0]
+        print(message)
 
-        # Logica de răspuns (rămâne la fel)
-        if "hi" in message or "hello" in message:
-            reply = "👋 Hello! What would you like to do?\n1️⃣ Book appointment\n2️⃣ Help"
-            send_message(number, reply)
-        elif "help" in message:
-            reply = "ℹ️ I can help you book appointments."
-            send_message(number, reply)
+        response = talk(message)
+
+        send_message(response)
+
+        # remote_jid = data.get("key", {}).get("remoteJid")
+        # number = remote_jid.split("@")[0]
+        #
+        # # Logica de răspuns (rămâne la fel)
+        # if "hi" in message or "hello" in message:
+        #     reply = "👋 Hello! What would you like to do?\n1️⃣ Book appointment\n2️⃣ Help"
+        #     send_message(number, reply)
+        # elif "help" in message:
+        #     reply = "ℹ️ I can help you book appointments."
+        #     send_message(number, reply)
 
     except Exception as e:
         print(f"Eroare: {e}")
