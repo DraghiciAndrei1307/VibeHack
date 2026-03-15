@@ -1,5 +1,7 @@
 import json
+import os
 import re
+import sys
 from io import BytesIO
 
 import requests
@@ -9,6 +11,7 @@ from openai import OpenAI
 from datetime import datetime   
 
 # Presupunem că acest fișier există deja în folderul tău
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import url_gen_and_parsing
 
 reader = easyocr.Reader(['en', 'ro'],gpu = True)
@@ -36,7 +39,7 @@ class AgentImage:
             if pret_str:
                 pret_initial = float(pret_str)
 
-            return extrase, pret_initial
+        return extrase, pret_initial
 
     def genereaza_json_din_ocr(self, ocr_text: str) -> dict:
         TIME_NOW = datetime.now()
