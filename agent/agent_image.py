@@ -1,6 +1,7 @@
 import json
 import os
 import re
+import sys
 from io import BytesIO
 import sys
 
@@ -39,7 +40,7 @@ class AgentImage:
             if pret_str:
                 pret_initial = float(pret_str)
 
-            return extrase, pret_initial
+        return extrase, pret_initial
 
     def genereaza_json_din_ocr(self, ocr_text: str) -> dict:
         TIME_NOW = datetime.now()

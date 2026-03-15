@@ -74,6 +74,7 @@ client = Client(account_sid, auth_token)
 
 
 def process_logic(user_msg, media_url, sender_number):
+    log(f"[THREAD] Started processing for {sender_number}: text={user_msg[:50]!r}... media={bool(media_url)}")
     try:
         if media_url:
             # Caz 1: Utilizatorul a trimis o poză – clasificăm: screenshot de zbor sau poză de loc
@@ -111,27 +112,36 @@ def process_logic(user_msg, media_url, sender_number):
                     msg_parts.append(flight_info)
                 response_text = "\n".join(msg_parts)
 
-        # Trimitere finală pe WhatsApp (4096 = limit Twilio WhatsApp; răspuns complet pentru location_finder)
         client.messages.create(
             from_='whatsapp:+14155238886',
             body=response_text[:1600],
             to=sender_number
         )
+        log(f"[THREAD] Follow-up message sent OK")
 
     except Exception as e:
-        print(f"THREAD ERROR: {e}")
-        client.messages.create(
-            from_='whatsapp:+14155238886',
-            body="⚠️ A apărut o problemă la procesarea cererii tale.",
-            to=sender_number
-        )
+        log(f"[THREAD] ERROR: {e}")
+        traceback.print_exc()
+        try:
+            client.messages.create(
+                from_='whatsapp:+14155238886',
+                body="⚠️ A apărut o problemă la procesarea cererii tale.",
+                to=sender_number
+            )
+            log("[THREAD] Error fallback message sent")
+        except Exception as send_err:
+            log(f"[THREAD] Failed to send error message to user: {send_err}")
 
 
 @app.route("/message", methods=["POST"])
 def message():
-    user_msg = request.values.get('Body', '').lower()
-    sender_number = request.values.get('From')
-    num_media = int(request.values.get('NumMedia', 0))
+    log("[FLASK] Incoming POST /message (request reached this Flask app)")
+    user_msg = (request.values.get('Body') or '').lower()
+    sender_number = request.values.get('From') or ''
+    try:
+        num_media = int(request.values.get('NumMedia') or 0)
+    except (TypeError, ValueError):
+        num_media = 0
 
     media_url = request.values.get('MediaUrl0') if num_media > 0 else None
 
@@ -145,8 +155,13 @@ def message():
     response = MessagingResponse()
     msg = "Analizez imaginea..." if media_url else "Caut zborurile solicitate..."
     response.message(msg)
+    log(f"[FLASK] Sending immediate TwiML reply, thread started for {sender_number}")
     return str(response)
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5001, debug=True)
+    log("Starting Flask server on http://0.0.0.0:5001 (use ngrok http 5001 and set Twilio webhook to https://YOUR_URL/message)")
+    # use_reloader=False is required when using background threads:
+    # otherwise the reloader can restart the process and kill the thread
+    # before it sends the follow-up WhatsApp message.
+    app.run(host="0.0.0.0", port=5001, debug=True, use_reloader=False)

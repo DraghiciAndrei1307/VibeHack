@@ -9,6 +9,10 @@ import url_gen_and_parsing
 
 from datetime import datetime
 
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+import url_gen_and_parsing
+
 TIME_NOW = datetime.now()
 
 class Agent:
