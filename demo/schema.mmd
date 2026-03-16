@@ -1,0 +1,16 @@
+---
+Flowchart
+---
+flowchart TD
+    A(['User'])
+    A --> |Input, Prompt| B([Model])
+    B --> C{Text/Image}
+    C --> |Text|D([URL Generation])
+    D --> |Scraping|E([Flight List])
+    C --> |Image|F{Screenshot/Destination}
+    F --> |Screenshot|G([Text Extraction])
+    G --> |Look up flight details|I([Find Offers])
+    F --> |Destination|H([Identify Destination])
+
+
+
