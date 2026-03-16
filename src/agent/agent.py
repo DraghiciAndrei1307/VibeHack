@@ -40,34 +40,22 @@ class Agent:
                 {"role": "user", "content": input_data}
             ],
             max_tokens=400,
-            temperature=0.0  # mai determinist ca să respecte JSON-ul
+            temperature=0.0  # this makes it more deterministic
         )
 
         payload = response.choices[0].message.content
         print("Raw payload:", payload)
 
-        # --- Curățare: extragem doar JSON-ul dintre acolade ---
+        # --- Cleaning: We extract only the JSON response ---
         match = re.search(r'\{.*\}', payload, re.DOTALL)
         if not match:
-            raise ValueError("Nu am putut găsi JSON în răspunsul modelului")
+            raise ValueError("JSON not found in the AI model response. ")
 
         json_str = match.group(0)
 
-        # --- Parsare ---
+        # --- Parsing ---
         payload_dict = json.loads(json_str)
 
-        # --- Folosire în funcția ta ---
         flights = url_gen_and_parsing.extract_flights(payload_dict)
 
         return flights
-
-# if __name__ == '__main__':
-#
-#     while True:
-#         input_query = input("Ask me a question: ")
-#
-#         if input_query == "exit":
-#             break
-#
-#         talk(input_query)
-

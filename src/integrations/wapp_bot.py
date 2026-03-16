@@ -68,7 +68,7 @@ def classify_image_type(media_url):
 
 app = Flask(__name__)
 
-# Datele tale de la Twilio
+# Your data from Twilio
 account_sid = os.environ.get("SID")
 auth_token = os.environ.get("AUTH_TOKEN")
 client = Client(account_sid, auth_token)
@@ -78,36 +78,36 @@ def process_logic(user_msg, media_url, sender_number):
     print(f"[THREAD] Started processing for {sender_number}: text={user_msg[:50]!r}... media={bool(media_url)}")
     try:
         if media_url:
-            # Caz 1: Utilizatorul a trimis o poză – clasificăm: screenshot de zbor sau poză de loc
+            # Case 1: User sends an image – we clasify: flight screenshot or image of a place
             image_kind = classify_image_type(media_url)
             if image_kind == "PLACE":
                 response_text = identify_location_from_url(media_url)
             else:
-                # Screenshot cu detalii de zbor – tratament neschimbat
+                # Flight details Screenshot
                 img_agent = AgentImage()
                 response_text = img_agent.find_cheaper_flight(media_url)
         else:
-            # Caz 2: Utilizatorul a trimis doar text
+            # Case 2: User sends only text
             new_agent = Agent()
             flights = new_agent.talk(user_msg)
 
             if not flights or not isinstance(flights, list):
-                response_text = "Nu am găsit zboruri pentru cererea ta."
+                response_text = "we couldn't identify flights."
             else:
-                msg_parts = ["✈️ *Zboruri găsite:* \n"]
+                msg_parts = ["✈️ *Flights found:* \n"]
                 for i, f in enumerate(flights[:5], 1):
                     departure = f.get('departure', {})
                     ret = f.get('return', {})
 
                     flight_info = (
                     f"*{i}. {f.get('price', 'N/A')}*\n"
-                    f"🛫 *Plecare:* {departure.get('date')}\n"
+                    f"🛫 *Departure:* {departure.get('date')}\n"
                     f"   _{departure.get('takeoff', {}).get('time')} ({departure.get('takeoff', {}).get('city')})_ -> "
                     f"_{departure.get('landing', {}).get('time')} ({departure.get('landing', {}).get('airport')})_\n"
-                    f"🛬 *Retur:* {ret.get('date')}\n"
+                    f"🛬 *Return:* {ret.get('date')}\n"
                     f"   _{ret.get('takeoff', {}).get('time')} ({ret.get('takeoff', {}).get('city')})_ -> "
                     f"_{ret.get('landing', {}).get('time')} ({ret.get('landing', {}).get('airport')})_\n"
-                    f"⏳ *Durată:* {f.get('stay_duration')}\n"
+                    f"⏳ *Time:* {f.get('stay_duration')}\n"
                     f"{'─' * 15}"
                     )
                     msg_parts.append(flight_info)
@@ -126,7 +126,7 @@ def process_logic(user_msg, media_url, sender_number):
         try:
             client.messages.create(
                 from_='whatsapp:+14155238886',
-                body="⚠️ A apărut o problemă la procesarea cererii tale.",
+                body="⚠️ An error occured while processing your request.",
                 to=sender_number
             )
             print("[THREAD] Error fallback message sent")
@@ -146,7 +146,7 @@ def message():
 
     media_url = request.values.get('MediaUrl0') if num_media > 0 else None
 
-    # Pornim thread-ul care decide singur dacă procesează Imagine sau Text
+    # Start the thread which decides we deal with image or text
     thread = threading.Thread(
         target=process_logic,
         args=(user_msg, media_url, sender_number)
@@ -154,7 +154,7 @@ def message():
     thread.start()
 
     response = MessagingResponse()
-    msg = "Analizez imaginea..." if media_url else "Caut zborurile solicitate..."
+    msg = "Image analysis..." if media_url else "Searching the requested flights..."
     response.message(msg)
     print(f"[FLASK] Sending immediate TwiML reply, thread started for {sender_number}")
     return str(response)

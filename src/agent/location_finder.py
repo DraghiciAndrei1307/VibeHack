@@ -88,7 +88,7 @@ def identify_location(image_path):
         }
     ]
 
-    print(f"[~] Trimit poza către {MODEL_NAME} pe Featherless...")
+    print(f"[~] Send image to {MODEL_NAME} on Featherless...")
     
     try:
         chat_response = client.chat.completions.create(
@@ -99,14 +99,14 @@ def identify_location(image_path):
             timeout=75.0
         )
         content = chat_response.choices[0].message.content
-        return content if content else "Nu am putut analiza poza."
+        return content if content else "Could not analyze the image."
     except Exception as e:
         return f"[!] API Error: {e}"
 
 if __name__ == "__main__":
     print("=== Gemma 3 Vision OSINT Agent ===\n")
     
-    target_image = input("Introdu calea către poză: ").strip()
+    target_image = input("Image path: ").strip()
     result = identify_location(target_image)
     
     print("\n=== AI Analysis ===\n")

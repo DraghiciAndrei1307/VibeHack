@@ -87,7 +87,7 @@ def parse_flight_stage(stage_element):
     
     stage_data = {}
     
-    # 1. Top header: Extract just the Date (e.g., "Du, 12 Apr. • Plecare" -> "Du, 12 Apr.")
+    # 1. Top header: Extract just the Date (e.g., "Du, 12 Apr. • Depature" -> "Du, 12 Apr.")
     header_div = stage_element.select_one('div.justify-space-between')
     raw_header = header_div.get_text(separator=" ", strip=True) if header_div else ""
     stage_data['date'] = raw_header.split('•')[0].strip() if '•' in raw_header else raw_header
@@ -179,7 +179,7 @@ def scrape_vola_flights(url: str) -> list:
                 # Inbound (return) is the second stage, if it exists
                 flight_data['return'] = parse_flight_stage(stages[1]) if len(stages) > 1 else None
 
-                # Stay Info (e.g., "7 days in Rome" or "3 nopți în Roma")
+                # Stay Info (e.g. "7 days in Rome")
                 stay_elem = card.select_one('li.flight-card__stay-info')
                 flight_data['stay_duration'] = stay_elem.get_text(separator=" ", strip=True) if stay_elem else "N/A"
 
@@ -187,7 +187,7 @@ def scrape_vola_flights(url: str) -> list:
                 actions_elem = card.select_one('div.flight-card__actions')
                 raw_actions_text = actions_elem.get_text(separator=" ", strip=True) if actions_elem else ""
                 
-                # Search for the "Preț:" pattern to isolate the actual cost
+                # Search for the "Price:" pattern to isolate the actual cost
                 price_match = re.search(r'Preț:\s*(\d+\s*€)', raw_actions_text)
                 
                 if price_match:

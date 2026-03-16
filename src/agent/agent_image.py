@@ -11,7 +11,6 @@ import easyocr
 from openai import OpenAI
 from datetime import datetime   
 
-# Presupunem că acest fișier există deja în folderul tău
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import integrations.url_gen_and_parsing as url_gen_and_parsing
 
@@ -25,7 +24,7 @@ class AgentImage:
         )
 
     def extrage_text_din_poza(self, image_url: str):
-        print(f"\n[~] Procesare OCR pentru: {image_url}")
+        print(f"\n[~] OCR processing for: {image_url}")
         headers = {'User-Agent': 'Mozilla/5.0'}
         response = requests.get(image_url, headers=headers, timeout=10)
         response.raise_for_status()
@@ -69,45 +68,46 @@ class AgentImage:
         )
 
         match = re.search(r'\{.*\}', response.choices[0].message.content, re.DOTALL)
-        if not match: raise ValueError("JSON nu a fost găsit.")
+        if not match: raise ValueError("JSON not found!")
         return json.loads(match.group(0))
 
     def find_cheaper_flight(self, image_input):
         text_extras, pret_initial = self.extrage_text_din_poza(image_input)
         if not text_extras:
-            return "❌ Nu am putut citi imaginea."
+            return "❌ Image not found!"
 
         try:
             payload_dict = self.genereaza_json_din_ocr(text_extras)
             flights = url_gen_and_parsing.extract_flights(payload_dict)
 
             if not flights:
-                return "✈️ Nu am găsit zboruri similare pentru datele din poză."
+                return "✈️ We could not find similar flights with the ones provided by your image."
 
             pret_nou = float(flights[0]['price'].replace('€', '').replace('\xa0', '').strip())
 
-            # Construim mesajul de răspuns
-            msg = f"🔍 *Analiză Imagine Finalizată*\n"
-            msg += f"💰 Preț în poză: {pret_initial}€\n"
+            # CREATE THE RESPONSE MESSAGE
+
+            msg = f"🔍 *Image Analysis Image*\n"
+            msg += f"💰 Price extracted from the image: {pret_initial}€\n"
 
             if pret_nou < pret_initial:
-                msg += f"🔥 *Am găsit mai ieftin!* Preț nou: {int(pret_nou)}€\n"
+                msg += f"🔥 *we found a cheaper flight!* New price: {int(pret_nou)}€\n"
             else:
-                msg += f"✅ Prețul tău este excelent. Cea mai bună ofertă găsită: {pret_nou}€\n"
+                msg += f"✅ You've found a nice deal! The best offer found: {pret_nou}€\n"
 
             f = flights[0]
             departure = f.get('departure') or {}
             ret = f.get('return') or {}
-            msg += "\n*Detalii cel mai bun zbor:*\n"
+            msg += "\n*Details of the best flight:*\n"
             msg += f"*{f.get('price', 'N/A')}*\n"
-            msg += f"🛫 *Plecare:* {departure.get('date', 'N/A')}\n"
+            msg += f"🛫 *Departure:* {departure.get('date', 'N/A')}\n"
             msg += f"   _{departure.get('takeoff', {}).get('time', 'N/A')} ({departure.get('takeoff', {}).get('city', 'N/A')})_ -> "
             msg += f"_{departure.get('landing', {}).get('time', 'N/A')} ({departure.get('landing', {}).get('airport', 'N/A')})_\n"
-            msg += f"🛬 *Retur:* {ret.get('date', 'N/A')}\n"
+            msg += f"🛬 *Return:* {ret.get('date', 'N/A')}\n"
             msg += f"   _{ret.get('takeoff', {}).get('time', 'N/A')} ({ret.get('takeoff', {}).get('city', 'N/A')})_ -> "
             msg += f"_{ret.get('landing', {}).get('time', 'N/A')} ({ret.get('landing', {}).get('airport', 'N/A')})_\n"
-            msg += f"⏳ *Durată:* {f.get('stay_duration', 'N/A')}\n"
+            msg += f"⏳ *Time:* {f.get('stay_duration', 'N/A')}\n"
             return msg
 
         except Exception as e:
-            return f"⚠️ Eroare la procesarea AI: {str(e)}"
+            return f"⚠️ Error while AI processing: {str(e)}"
