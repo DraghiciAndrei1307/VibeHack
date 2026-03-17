@@ -1,11 +1,26 @@
 # VibeHack
 
-## Description
+## 📄 Description
 
 This is the solution that the 'Two Devs One Repo' team developed during a 2-day VibeHack hackathon. It was a nice 
 challenge from which we had a lot of things to learn. 
 
-## How to use
+## ✨ What makes this solution special? 
+
+This project started as a hackathon challenge that used AI capabilities to:
+- extract data from a regular user's WhatsApp message and provide a list of flights based on the user's preferences
+- analyze a screenshot with some flight details, from a designated website, sent by the user and try to find a better 
+deal on the Vola website
+- analyze an image sent by the user with a random place from all over the world and try to guess the place. Based on 
+this guess, it will try to provide some flight details to that place
+
+This project uses:
+- Twilio endpoint to create a WhatsApp bot that acts as the interface between the user and the AI agent.
+- Ngrok in order to create a gateway between the Twilio servers and the localhost where the agent is running
+- Python in order to create all the logic of this project (API calls, formatting, etc.)
+- Featherless.ai endpoint in order to use different models available there
+
+## 🔥 How to use
 
 1) The first thing you have to do is to clone this repo, using the following command:
 
@@ -78,8 +93,15 @@ HTTP Requests
 Basically, all traffic that the ngrok endpoint `https://unhastily-leafed-nell.ngrok-free.dev` receives is redirected to 
 the localhost endpoint `localhost` through port 5001. 
  
-## What makes this project special? 
+## ⚠️ Before you start working 
 
+Before you start adding your contribution here, please read and understand the following documentation:
+- [COMMIT_GUIDELINES](docs/COMMIT_GUIDELINES.md)
+- [PULL_REQUEST_GUIDELINES.md](docs/PULL_REQUEST_GUIDELINES.md)
+- [work_with_branches.mmd](docs/work_with_branches.mmd)
+
+The documentation referenced above has the purpose of creating a collaboration standard between all contributors of 
+this solution.  
 
 
 
