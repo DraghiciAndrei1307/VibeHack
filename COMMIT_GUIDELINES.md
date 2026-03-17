@@ -20,15 +20,15 @@
 
 ## Commit rules
 
-| Commit structure <type>/<scope>/<short_description> | Description                                   | Example commit message                                        |
-|:----------------------------------------------------|:----------------------------------------------|:--------------------------------------------------------------|
-| feat(scope): <short_description>                    | New feature                                   | feat(chat): add a parser for emoji shortcuts in user messages | 
-| fix(scope): <short_description>                     | Bug fix                                       | fix(bot): prevent crash when input is empty                   |
-| docs(scope): <short_description>                    | Docs changes                                  | docs(readme): clarify installation steps                      |
-| style(scope): <short_description>                   | Formatting, spacing, no impact                | style(code): reformat code for consistent spacing             |
-| refactor(scope): <short_description>                | Code restructuring without feature, no impact | refacto(api): remove redundant code and improve readability   |
-| test(scope): <short_description>                    | Add/change tests                              | test(bot): cover edge cases for message parsing               |
-| chore(scope): <short_description>                   | Maintenance / Administrative tasks            | chore(ci): upgrade Flask version in CI                        | 
+| Commit structure type(scope): <short_description> | Description                                   | Example commit message                                        |
+|:--------------------------------------------------|:----------------------------------------------|:--------------------------------------------------------------|
+| feat(scope): <short_description>                  | New feature                                   | feat(chat): add a parser for emoji shortcuts in user messages | 
+| fix(scope): <short_description>                   | Bug fix                                       | fix(bot): prevent crash when input is empty                   |
+| docs(scope): <short_description>                  | Docs changes                                  | docs(readme): clarify installation steps                      |
+| style(scope): <short_description>                 | Formatting, spacing, no impact                | style(code): reformat code for consistent spacing             |
+| refactor(scope): <short_description>              | Code restructuring without feature, no impact | refacto(api): remove redundant code and improve readability   |
+| test(scope): <short_description>                  | Add/change tests                              | test(bot): cover edge cases for message parsing               |
+| chore(scope): <short_description>                 | Maintenance / Administrative tasks            | chore(ci): upgrade Flask version in CI                        | 
 
 
 ## Rules and good practice
