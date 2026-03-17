@@ -2,15 +2,15 @@
 
 ## Branch naming 
 
-| Branch name <type>/<scope>/<short_description> | Description                                   | Example branch naming |
-|:-----------------------------------------------|:----------------------------------------------|:----------------------|
-| feat/<scope>                                   | New feature                                   | feat/chat             | 
-| fix/<scope>                                    | Bug fix                                       | fix/bot               |
-| docs/<scope>                                   | Docs changes                                  | docs/readme           |
-| style/<scope>                                  | Formatting, spacing, no impact                | style/code            |
-| refactor/<scope>>                              | Code restructuring without feature, no impact | refactor/api          |
-| test/<scope>                                   | Add/change tests                              | test/bot              |
-| chore/<scope>                                  | Maintenance / Administrative tasks            | chore/ci              | 
+| Branch name type/scope | Description                                   | Example branch naming |
+|:-----------------------|:----------------------------------------------|:----------------------|
+| feat/scope             | New feature                                   | feat/chat             | 
+| fix/scope              | Bug fix                                       | fix/bot               |
+| docs/scope             | Docs changes                                  | docs/readme           |
+| style/scope            | Formatting, spacing, no impact                | style/code            |
+| refactor/scope         | Code restructuring without feature, no impact | refactor/api          |
+| test/scope             | Add/change tests                              | test/bot              |
+| chore/scope            | Maintenance / Administrative tasks            | chore/ci              | 
 
 ## Branch naming - details
 
