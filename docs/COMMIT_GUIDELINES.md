@@ -1,6 +1,6 @@
 # COMMIT GUIDELINES
 
-## Mandatory branches
+## 📌 Mandatory branches
 
 - `vibehack`: this branch will remain unchanged as a reminder of the achievements of the VibeHack hackathon
 - `prod`/`main`: used in production environments
@@ -11,7 +11,7 @@
   - test unfinished work on your own test environment
   - put changes you consider finished on this branch for final tests
 
-## Branch naming 
+## 🏷️ Branch naming 
 
 | Branch name type/scope | Description                                   | Example branch naming |
 |:-----------------------|:----------------------------------------------|:----------------------|
@@ -23,13 +23,13 @@
 | test/scope             | Add/change tests                              | test/bot              |
 | chore/scope            | Maintenance / Administrative tasks            | chore/ci              | 
 
-## Branch naming - details
+## 🔍 Branch naming - details
 
 - the <type> is the first option from the branch naming ()
 - the <scope> in the branch naming represents the affected zone (e.g. 'chat', 'api', 'ui')
 
 
-## Commit rules
+## ⚖️ Commit rules
 
 | Commit structure type(scope): <short_description> | Description                                   | Example commit message                                        |
 |:--------------------------------------------------|:----------------------------------------------|:--------------------------------------------------------------|
@@ -42,14 +42,14 @@
 | chore(scope): <short_description>                 | Maintenance / Administrative tasks            | chore(ci): upgrade Flask version in CI                        | 
 
 
-## Rules and good practice
+## ✔️ Rules and good practice
 
 - The message must be concise and clear
 - Use imperative mood ('add', 'fix', 'update')
 - Do NOT include specific bug-related details in separate branches
 - Do NOT use obscure abbreviations (e.g. "fixes/bot/#12 OK", "f/api/#12 no")
 
-## How to work with branches
+## 🧭 How to work with branches
 
 1) Create a new branch
    - Always do this from productive
@@ -73,7 +73,7 @@
      - or you can create a new branch from yours with the same name except for the space being 'archive', publish it
      on the remote and delete the old one 
 
-## Refrences / Workflow
+## 🔗 Refrences / Workflow
 
-- link to CONTRIBUTING.md
-- link to commit validation tool
+- [PULL_REQUEST_GUIDELINES.md](PULL_REQUEST_GUIDELINES.md)
+- [work_with_branches.mmd](work_with_branches.mmd)
