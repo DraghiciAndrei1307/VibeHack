@@ -1,0 +1,36 @@
+%%{init: {
+  'theme': 'dark',
+  'themeVariables': {
+    'primaryColor': '#1a1a1a',
+    'noteBkgColor': '#333333',
+    'noteTextColor': '#ffffff',
+    'actorTextColor': '#ffffff',
+    'mainBkg': '#1a1a1a'
+  }
+}}%%
+sequenceDiagram
+    participant D as development
+    participant P as productive
+    participant F as feature/your_branch
+    participant T as test
+
+    P-->>F: branch start
+
+    F->>F: commit
+    F->>F: commit
+
+    P-->>F: merge
+
+    F-->>T: merge
+
+    F->>F: commit
+
+    P-->>F: merge
+
+    F->>F: commit
+
+    F-->>T: merge
+
+    F-->>D: merge
+
+    F-->>P: merge
