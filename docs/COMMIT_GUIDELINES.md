@@ -1,5 +1,16 @@
 # COMMIT GUIDELINES
 
+## Mandatory branches
+
+- `vibehack`: this branch will remain unchanged as a reminder of the achievements of the VibeHack hackathon
+- `prod`/`main`: used in production environments
+- `dev`: used in non-productive environments
+- `test`: 
+  - used to test databases for testing purposes
+  - this branch is not for unfinished changes (
+  - test unfinished work on your own test environment
+  - put changes you consider finished on this branch for final tests
+
 ## Branch naming 
 
 | Branch name type/scope | Description                                   | Example branch naming |
