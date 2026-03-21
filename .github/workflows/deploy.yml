@@ -23,7 +23,7 @@ jobs:
       - name: Perform linting with pylint
         id: pylint-test
         run: |
-          pylint project/**/*.py --disable=R0903,C0303,W0718,R1732,R0914,R0801
+          pylint src/**/*.py --disable=R0903,C0303,W0718,R1732,R0914,R0801
           pylint main.py --disable=R0903,C0303,W0718,R1732,R0914,R0801
       - name: Perform linting with flake8
         run: | 
