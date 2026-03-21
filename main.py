@@ -1,6 +1,12 @@
+
+"""
+    Module that uses Evolution API instead of Twilio.
+"""
+
+import os
+
 from flask import Flask, request, jsonify
 import requests
-import os
 
 app = Flask(__name__)
 
@@ -12,7 +18,11 @@ INSTANCE = os.getenv("INSTANCE_NAME")
 
 @app.route("/webhook", methods=["POST"])
 def webhook():
-    # Get JSON data from the Evolution API
+
+    """
+        Get JSON data from the Evolution API
+    """
+
     payload = request.get_json()
 
     if not payload:
@@ -32,7 +42,10 @@ def webhook():
     reply = "👋 Hi!\n1️⃣ Book appointment\n2️⃣ Help"
 
     if "hi" in message or "hello" in message:
-        reply = "👋 Hello! What would you like to do?\n1️⃣ Book appointment\n2️⃣ Help"
+        reply = (
+            "👋 Hello! What would you like to do?\n"
+            "1️⃣ Book appointment\n2️⃣ Help"
+        )
     elif "help" in message:
         reply = "ℹ️ I can help you book appointments via WhatsApp."
 
@@ -43,6 +56,11 @@ def webhook():
 
 
 def send_message(number, text):
+
+    """
+        Function to send a message to the Evolution API.
+    """
+
     url = f"{EVOLUTION_API}/message/sendText/{INSTANCE}"
     headers = {
         "apikey": API_KEY,
@@ -55,12 +73,15 @@ def send_message(number, text):
         "linkPreview": False
     }
 
-    response = requests.post(url, json=data, headers=headers)
+    response = requests.post(
+        url=url,
+        json=data,
+        headers=headers,
+        timeout=10
+    )
     return response.status_code
 
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
-
-
