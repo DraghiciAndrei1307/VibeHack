@@ -42,8 +42,9 @@ def webhook():
     reply = "👋 Hi!\n1️⃣ Book appointment\n2️⃣ Help"
 
     if "hi" in message or "hello" in message:
-        reply = ("👋 Hello! What would you like to do?\n"
-                 "1️⃣ Book appointment\n2️⃣ Help"
+        reply = (
+            "👋 Hello! What would you like to do?\n"
+            "1️⃣ Book appointment\n2️⃣ Help"
         )
     elif "help" in message:
         reply = "ℹ️ I can help you book appointments via WhatsApp."
