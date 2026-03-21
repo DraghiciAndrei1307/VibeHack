@@ -20,24 +20,35 @@ client = OpenAI(
     base_url="https://api.featherless.ai/v1"
 )
 
-# You can use "google/gemma-3-27b-it", "google/gemma-3-11b-it", or "google/gemma-3-4b-it"
+# You can use:
+# "google/gemma-3-27b-it",
+# "google/gemma-3-11b-it",
+# or "google/gemma-3-4b-it"
 # depending on which one you accepted the agreement for.
+
 MODEL_NAME = "google/gemma-3-27b-it"
 
 
 def _download_media_to_temp(url, timeout=15):
-    """Download image from URL (e.g. Twilio MediaUrl) to a temp file. Returns path."""
+    """
+        Download image from URL (e.g. Twilio MediaUrl)
+        to a temp file. Returns path.
+    """
     headers = {"User-Agent": "Mozilla/5.0"}
     resp = requests.get(url, headers=headers, timeout=timeout)
     resp.raise_for_status()
-    f =  tempfile.NamedTemporaryFile(delete=False, suffix=".jpg")
+    f = tempfile.NamedTemporaryFile(delete=False, suffix=".jpg")
     f.write(resp.content)
     f.close()
     return f.name
 
 
 def identify_location_from_url(image_url):
-    """Download image from URL, run identify_location, then delete temp file."""
+    """
+        Download image from URL,
+        run identify_location,
+        then delete temp file.
+    """
     path = None
     try:
         path = _download_media_to_temp(image_url)
@@ -64,6 +75,7 @@ def encode_and_resize_image(image_path, max_size=(1024, 1024)):
     except Exception as e:
         print(f"[!] Eroare la procesarea pozei: {e}")
         return None
+
 
 def identify_location(image_path):
 
@@ -93,7 +105,7 @@ def identify_location(image_path):
                 {"type": "image_url", "image_url":
                     {
                         "url": f"data:image/jpeg;base64,"
-                            f"{base64_image}"
+                               f"{base64_image}"
                     }
                  }
             ]
@@ -114,9 +126,10 @@ def identify_location(image_path):
     except Exception as e:
         return f"[!] API Error: {e}"
 
+
 if __name__ == "__main__":
     print("=== Gemma 3 Vision OSINT Agent ===\n")
-    target_image=input("Image path: ").strip()
+    target_image = input("Image path: ").strip()
     result = identify_location(target_image)
     print("\n=== AI Analysis ===\n")
     print(result)
