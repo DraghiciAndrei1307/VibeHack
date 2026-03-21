@@ -1,6 +1,7 @@
+import os
+
 from flask import Flask, request, jsonify
 import requests
-import os
 
 app = Flask(__name__)
 
@@ -12,7 +13,11 @@ INSTANCE = os.getenv("INSTANCE_NAME")
 
 @app.route("/webhook", methods=["POST"])
 def webhook():
-    # Get JSON data from the Evolution API
+
+    """
+        Get JSON data from the Evolution API
+    """
+
     payload = request.get_json()
 
     if not payload:
@@ -43,6 +48,11 @@ def webhook():
 
 
 def send_message(number, text):
+
+    """
+        Function to send a message to the Evolution API.
+    """
+
     url = f"{EVOLUTION_API}/message/sendText/{INSTANCE}"
     headers = {
         "apikey": API_KEY,
