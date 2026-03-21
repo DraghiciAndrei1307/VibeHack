@@ -1,3 +1,8 @@
+
+"""
+    Module that uses Evolution API instead of Twilio.
+"""
+
 import os
 
 from flask import Flask, request, jsonify
@@ -65,12 +70,15 @@ def send_message(number, text):
         "linkPreview": False
     }
 
-    response = requests.post(url, json=data, headers=headers)
+    response = requests.post(
+        url=url,
+        json=data,
+        headers=headers,
+        timeout=10
+    )
     return response.status_code
 
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
-
-
