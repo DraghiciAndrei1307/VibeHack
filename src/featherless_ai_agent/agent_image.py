@@ -2,6 +2,11 @@
 """
     Module that takes an image from the user
     and tries to guess the place.
+
+    This solution is based on the Featherless.ai API.
+
+    The Featherless.ai API is not used anymore due
+    to usage costs.
 """
 
 import json
