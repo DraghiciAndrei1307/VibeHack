@@ -2,6 +2,11 @@
 """
     Module that contains the logic of
     find a location based of an image.
+
+    This solution is based on the Featherless.ai API.
+
+    The Featherless.ai API is not used anymore due
+    to usage costs.
 """
 
 import base64
