@@ -28,7 +28,7 @@ class Agent:
 
         self.client = OpenAI(
             base_url="https://api.featherless.ai/v1",
-            api_key= os.environ.get("API_KEY")
+            api_key=os.environ.get("API_KEY")
         )
 
         self.instruction_prompt = (
@@ -46,8 +46,9 @@ class Agent:
             '"deduplicate": false, '
             '"luggageOptions": {"personalItemCount": 1, '
             '"cabinTrolleyCount": 0, "checkedBaggageCount": 0}}. '
-            "If user input for destination and departure matches an airport code, "
-            "use that code, and the type field should be 'AIRPORT'. "
+            "If user input for destination and departure matches an "
+            "airport code, use that code, and the "
+            "type field should be 'AIRPORT'. "
             "Do not add any text outside of this JSON. Leave default values "
             "if user does not provide them."
             f"Give results after the current_date: {TIME_NOW}"
