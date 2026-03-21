@@ -24,12 +24,11 @@ from agent.location_finder import (
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 
-
-
 def classify_image_type(media_url):
     """
     Use the same Gemma vision model as location_finder to classify the image:
-    SCREENSHOT = flight/booking screenshot, PLACE = photo of a real-world location.
+    SCREENSHOT = flight/booking screenshot,
+    PLACE = photo of a real-world location.
     Returns "SCREENSHOT" or "PLACE". Defaults to "SCREENSHOT" on any error.
     """
     path = None
@@ -84,7 +83,9 @@ def classify_image_type(media_url):
             except Exception:
                 pass
 
+
 app = Flask(__name__)
+
 
 # Your data from Twilio
 account_sid = os.environ.get("SID")
@@ -105,7 +106,8 @@ def process_logic(user_msg, media_url, sender_number):
     )
     try:
         if media_url:
-            # Case 1: User sends an image – we clasify: flight screenshot or image of a place
+            # Case 1: User sends an image – we clasify:
+            # flight screenshot or image of a place
             image_kind = classify_image_type(media_url)
             if image_kind == "PLACE":
                 response_text = identify_location_from_url(media_url)
@@ -127,19 +129,19 @@ def process_logic(user_msg, media_url, sender_number):
                     ret = f.get('return', {})
 
                     flight_info = (
-                    f"*{i}. {f.get('price', 'N/A')}*\n"
-                    f"🛫 *Departure:* {departure.get('date')}\n"
-                    f"   _{departure.get('takeoff', {}).get('time')} "
-                    f"({departure.get('takeoff', {}).get('city')})_ -> "
-                    f"_{departure.get('landing', {}).get('time')} "
-                    f"({departure.get('landing', {}).get('airport')})_\n"
-                    f"🛬 *Return:* {ret.get('date')}\n"
-                    f"   _{ret.get('takeoff', {}).get('time')} "
-                    f"({ret.get('takeoff', {}).get('city')})_ -> "
-                    f"_{ret.get('landing', {}).get('time')} "
-                    f"({ret.get('landing', {}).get('airport')})_\n"
-                    f"⏳ *Time:* {f.get('stay_duration')}\n"
-                    f"{'─' * 15}"
+                        f"*{i}. {f.get('price', 'N/A')}*\n"
+                        f"🛫 *Departure:* {departure.get('date')}\n"
+                        f"   _{departure.get('takeoff', {}).get('time')} "
+                        f"({departure.get('takeoff', {}).get('city')})_ -> "
+                        f"_{departure.get('landing', {}).get('time')} "
+                        f"({departure.get('landing', {}).get('airport')})_\n"
+                        f"🛬 *Return:* {ret.get('date')}\n"
+                        f"   _{ret.get('takeoff', {}).get('time')} "
+                        f"({ret.get('takeoff', {}).get('city')})_ -> "
+                        f"_{ret.get('landing', {}).get('time')} "
+                        f"({ret.get('landing', {}).get('airport')})_\n"
+                        f"⏳ *Time:* {f.get('stay_duration')}\n"
+                        f"{'─' * 15}"
                     )
                     msg_parts.append(flight_info)
                 response_text = "\n".join(msg_parts)
@@ -188,9 +190,14 @@ def message():
     thread.start()
 
     response = MessagingResponse()
-    msg = "Image analysis..." if media_url else "Searching the requested flights..."
+    msg = "Image analysis..." \
+        if media_url else \
+        "Searching the requested flights..."
     response.message(msg)
-    print(f"[FLASK] Sending immediate TwiML reply, thread started for {sender_number}")
+    print(
+        "[FLASK] Sending immediate TwiML reply, "
+        f"thread started for {sender_number}"
+    )
     return str(response)
 
 

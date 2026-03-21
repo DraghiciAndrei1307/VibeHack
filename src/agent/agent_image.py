@@ -19,7 +19,11 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 TIME_NOW = datetime.now()
 
-reader = easyocr.Reader(['en', 'ro'],gpu = True)
+reader = easyocr.Reader(
+    ['en', 'ro'],
+    gpu=True
+)
+
 
 class AgentImage:
 
@@ -31,7 +35,7 @@ class AgentImage:
     def __init__(self):
         self.client = OpenAI(
             base_url="https://api.featherless.ai/v1",
-            api_key= os.environ.get("API_KEY")
+            api_key=os.environ.get("API_KEY")
         )
 
     def extract_text_from_screenshot(self, image_url: str):
@@ -56,7 +60,6 @@ class AgentImage:
                 pret_initial = float(pret_str)
 
         return extrase, pret_initial
-
 
     def generate_json_from_ocr(self, ocr_text: str) -> dict:
 
@@ -86,11 +89,17 @@ class AgentImage:
             '"locations": {"origins": [{"code": "BUH", "type": "CITY"}],'
             ' "destinations": [{"code": "*", "type": "ANYWHERE"}]}, '
             '"deduplicate": false, '
-            '"luggageOptions": {"personalItemCount": 1, "cabinTrolleyCount": 0,'
-            ' "checkedBaggageCount": 0}}. '
-            "If user input for destination and departure matches an airport code,"
-            " use that code, and the type field should be 'AIRPORT'. Do not add any"
-            " text, markdown, or explanation outside of the JSON block. Leave default"
+            '"luggageOptions": {'
+            '"personalItemCount": 1, '
+            '"cabinTrolleyCount": 0,'
+            ' "checkedBaggageCount": 0'
+            '}}. '
+            "If user input for destination and departure "
+            "matches an airport code,"
+            " use that code, and the type field should be "
+            "'AIRPORT'. Do not add any"
+            " text, markdown, or explanation outside of the "
+            "JSON block. Leave default"
             " values if data is missing. "
             f"Give results after the current_date: {TIME_NOW}"
         )
@@ -103,7 +112,10 @@ class AgentImage:
             ],
             temperature=0.0
         )
-        match = re.search(r'\{.*\}', response.choices[0].message.content, re.DOTALL)
+        match = re.search(
+            r'\{.*\}',
+            response.choices[0].message.content, re.DOTALL
+        )
         if not match:
             raise ValueError("JSON not found!")
         return json.loads(match.group(0))
@@ -114,7 +126,9 @@ class AgentImage:
             Method that finds the cheaper flight.
         """
 
-        text_extras, pret_initial = self.extract_text_from_screenshot(image_input)
+        text_extras, pret_initial = (
+            self.extract_text_from_screenshot(image_input)
+        )
         if not text_extras:
             return "❌ Image not found!"
 
@@ -123,9 +137,13 @@ class AgentImage:
             flights = url_gen_and_parsing.extract_flights(payload_dict)
 
             if not flights:
-                return "✈️ We could not find similar flights with the ones provided by your image."
+                return ("✈️ We could not find similar flights "
+                        "with the ones provided by your image.")
 
-            pret_nou = float(flights[0]['price'].replace('€', '').replace('\xa0', '').strip())
+            pret_nou = float(
+                flights[0]['price'].replace(
+                    '€', '').replace('\xa0', '').strip()
+            )
 
             # CREATE THE RESPONSE MESSAGE
 
@@ -133,60 +151,42 @@ class AgentImage:
             msg += f"💰 Price extracted from the image: {pret_initial}€\n"
 
             if pret_nou < pret_initial:
-                msg += f"🔥 *we found a cheaper flight!* New price: {int(pret_nou)}€\n"
+                msg += ("🔥 *we found a cheaper flight!"
+                        f"* New price: {int(pret_nou)}€\n")
             else:
-                msg += f"✅ You've found a nice deal! The best offer found: {pret_nou}€\n"
+                msg += ("✅ You've found a nice deal! "
+                        f"The best offer found: {pret_nou}€\n")
 
             f = flights[0]
-            departure = f.get('departure') or {}
-            ret = f.get('return') or {}
-            msg += "\n*Details of the best flight:*\n"
+            departure = f.get('departure', {})
+            ret = f.get('return', {})
+
+            dep_takeoff = departure.get('takeoff', {})
+            dep_landing = departure.get('landing', {})
+            ret_takeoff = ret.get('takeoff', {})
+            ret_landing = ret.get('landing', {})
+
+            msg = "*Details of the best flight:*\n"
             msg += f"*{f.get('price', 'N/A')}*\n"
+
             msg += (
-                f"🛫 *Departure:* "
-                f"{departure.get('date', 'N/A')}\n"
+                f"🛫 *Departure:* {departure.get('date', 'N/A')}\n"
+                f"   _{dep_takeoff.get('time', 'N/A')} "
+                f"({dep_takeoff.get('city', 'N/A')})_ -> "
+                f"_{dep_landing.get('time', 'N/A')} "
+                f"({dep_landing.get('airport', 'N/A')})_\n"
             )
-            msg+=(
-            f"   _{
-                departure.get(
-                    'takeoff', 
-                    {}).get('time', 'N/A')
-            }"            
-            f" ({departure.get(
-                    'takeoff', 
-                    {}).get('city', 'N/A')
-            })_ -> "
+
+            msg += (
+                f"🛬 *Return:* {ret.get('date', 'N/A')}\n"
+                f"   _{ret_takeoff.get('time', 'N/A')} "
+                f"({ret_takeoff.get('city', 'N/A')})_ -> "
+                f"_{ret_landing.get('time', 'N/A')} "
+                f"({ret_landing.get('airport', 'N/A')})_\n"
             )
-            msg += (f"_{
-            departure.get(
-                'landing', 
-                {}).get(
-                'time', 
-                'N/A')} "
-                    f"({
-                    departure.get(
-                        'landing', 
-                        {}).get(
-                        'airport', 
-                        'N/A')})_\n"
-            )
-            msg += f"🛬 *Return:* {ret.get(
-                'date', 'N/A')}\n"
-            msg += f"   _{ret.get(
-                'takeoff', {}).get(
-                'time', 'N/A')} ({ret.get(
-                'takeoff', {}).get(
-                'city', 'N/A')})_ -> "
-            msg += f"_{ret.get(
-                'landing', 
-                {}).get(
-                'time', 'N/A'
-            )} ({ret.get(
-                'landing', 
-                {}).get(
-                'airport', 
-                'N/A')})_\n"
+
             msg += f"⏳ *Time:* {f.get('stay_duration', 'N/A')}\n"
+
             return msg
 
         except Exception as e:
