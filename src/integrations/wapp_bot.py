@@ -12,9 +12,9 @@ from flask import Flask, request
 from twilio.twiml.messaging_response import MessagingResponse
 from twilio.rest import Client  # Twilio REST client
 
-from agent.agent import Agent
-from agent.agent_image import AgentImage
-from agent.location_finder import (
+from featherless_ai_agent.agent import Agent
+from featherless_ai_agent.agent_image import AgentImage
+from featherless_ai_agent.location_finder import (
     _download_media_to_temp,
     identify_location_from_url,
     encode_and_resize_image,
